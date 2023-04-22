@@ -1,34 +1,38 @@
-import React, { useEffect } from 'react'
+import { useEffect }from 'react'
+import { useWorkoutsContext } from "../hooks/useWorkoutsContext"
+import { useAuthContext } from "../hooks/useAuthContext"
 import WorkoutDetails from '../components/WorkoutDetails'
 import WorkoutForm from '../components/WorkoutForm'
-import { useWorkoutsContext } from '../hooks/useWorkoutsContext'
 
 const Home = () => {
   const {workouts, dispatch} = useWorkoutsContext()
-  
-  useEffect(()=>{
-    const fetchWorkouts = async()=>{
-      const response = await fetch('http://localhost:4000/api/workouts')
+  const {user} = useAuthContext()
+
+  useEffect(() => {
+    const fetchWorkouts = async () => {
+      const response = await fetch('https://workout-app-backend-gajf.onrender.com/api/workouts', {
+        headers: {'Authorization': `Bearer ${user.token}`},
+      })
       const json = await response.json()
 
-      if(response.ok){
-        dispatch({type:'SET_WORKOUTS' , payload:json})
+      if (response.ok) {
+        dispatch({type: 'SET_WORKOUTS', payload: json})
       }
     }
-    fetchWorkouts()
-  },[dispatch])
 
+    if (user) {
+      fetchWorkouts()
+    }
+  }, [dispatch, user])
 
   return (
-    <div>
+    <div className="">
       <div className="workouts">
-        {
-        workouts && workouts.map((workout)=>(
-          <WorkoutDetails key={workout._id} workout={workout}/>
-        ))
-        }
+        {workouts && workouts.map((workout) => (
+          <WorkoutDetails key={workout._id} workout={workout} />
+        ))}
       </div>
-        <WorkoutForm/>
+      <WorkoutForm />
     </div>
   )
 }

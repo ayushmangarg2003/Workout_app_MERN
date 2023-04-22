@@ -1,22 +1,32 @@
-const express = require('express');
+const express = require('express')
+const {
+  createWorkout,
+  getWorkouts,
+  getWorkout,
+  deleteWorkout,
+  updateWorkout
+} = require('../controller/workoutController')
+const requireAuth = require('../middleware/requireAuth')
 
-// Callback Functions are defined in workoutControllers
-const { createWorkout, getWorkouts, getWorkout, deleteWorkout, updateWorkout } = require('../controller/workoutController');
-const router = express.Router();
+const router = express.Router()
 
-// Get all workouts
+// require auth for all workout routes
+router.use(requireAuth)
+
+// GET all workouts
 router.get('/', getWorkouts)
 
-// Get a single workout
+//GET a single workout
 router.get('/:id', getWorkout)
 
-// Post a new Workout
+// POST a new workout
 router.post('/', createWorkout)
 
-// Delete a Workout
+// DELETE a workout
 router.delete('/:id', deleteWorkout)
 
-// Update a new Workout
-router.patch('/:id',updateWorkout)
+// UPDATE a workout
+router.patch('/:id', updateWorkout)
 
-module.exports = router;
+
+module.exports = router
